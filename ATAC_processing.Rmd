@@ -29,7 +29,21 @@ samtools view out.sorted.rmdup.bam | awk '(sqrt($9*$9)<100)' > out.sam
 samtools view -H *.sorted.rmdup.bam > header.txt
 cat header.txt out.sam | samtools view -Sb -o $100nt.bam
 
+## BigWig for browser visualization
+#Normalizing to 1x genome coverage with input
+#--normalizeTo1x effective genome size
+bamCompare -b1 ATAC.sorted.dupsrem.bam -b2 chip.input.out.bam -o log2.name.to.input.1x.merged.bw --normalizeTo1x 2730871774 --minMappingQuality 30 --ignoreForNormalization chrX chrM chrY &
 
+## Peak calling
+# Using macs2
+macs2 callpeak --nomodel -t input.sorted.rmdup.100nt.bam -f BAMPE -n output_name --call-summits -g mm -B -q 0.05 --outdir outdir_name/ 
+
+# Removing peaks that map to blacklisted regions
+bedtools intersect -v -a my.bed -b mm10.blacklist.bed > my.filtered.bed
+
+# Removing peaks from chrY and chrM
+
+grep -v chrY my.filtered.bed | grep -v chrM > my.filtered.2.bed
 
 
 ```{r setup, include=FALSE}
