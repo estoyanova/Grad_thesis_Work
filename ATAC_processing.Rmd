@@ -25,9 +25,11 @@ samtools sort -@ 64 out.bam out.sorted
 samtools rmdup out.sorted.bam out.sorted.rmdup.bam
 
 ## Selection of subnucleosomal reads 
+```{r}
 samtools view out.sorted.rmdup.bam | awk '(sqrt($9*$9)<100)' > out.sam
 samtools view -H *.sorted.rmdup.bam > header.txt
 cat header.txt out.sam | samtools view -Sb -o $100nt.bam
+```
 
 # BigWig for browser visualization
 ## Normalizing to 1x genome coverage with input
