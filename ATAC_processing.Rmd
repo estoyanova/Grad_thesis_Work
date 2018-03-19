@@ -6,7 +6,7 @@ output: html_document
 ---
 # QC and trimming of FastQ Files 
 ## Using trim_galore, which is a wrapper for cutadapt and FastQC
-```{r}
+```
 trim_galore --stringency 3 --fastqc --paired $R1.fastq $R2.fastq 
 ```
 # Alignment of raw reads
