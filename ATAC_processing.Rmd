@@ -6,24 +6,22 @@ output: html_document
 ---
 # QC and trimming of FastQ Files 
 ## Using trim_galore, which is a wrapper for cutadapt and FastQC
-
+```{r}
 trim_galore --stringency 3 --fastqc --paired $R1.fastq $R2.fastq 
-
+```
 # Alignment of raw reads
 ## Using bowtie2 
-
+```{r}
 bowtie2 -p 64 -x Sequence/Bowtie2Index/genome -X 2000 --no-mixed --no-discordant -1 *.R1.fastq -2 *.R2.fastq -S output.sam > output.sam.out 2>&1&
-
+```
 # Post-alignment processing
-## Sam to bam conversion with samtools 
+## Sam to bam conversion with samtools, sorting, duplicate removal
+
+``` {r}
 samtools view -Sb -@ 10 in.sam -o out.bam
-
-## Sorting
 samtools sort -@ 64 out.bam out.sorted 
-
-## Duplicate removal 
 samtools rmdup out.sorted.bam out.sorted.rmdup.bam
-
+```
 ## Selection of subnucleosomal reads 
 ```{r}
 samtools view out.sorted.rmdup.bam | awk '(sqrt($9*$9)<100)' > out.sam
@@ -34,18 +32,18 @@ cat header.txt out.sam | samtools view -Sb -o $100nt.bam
 # BigWig for browser visualization
 ## Normalizing to 1x genome coverage with input
 ##--normalizeTo1x effective genome size
+``` {r}
 bamCompare -b1 ATAC.sorted.dupsrem.bam -b2 chip.input.out.bam -o log2.name.to.input.1x.merged.bw --normalizeTo1x 2730871774 --minMappingQuality 30 --ignoreForNormalization chrX chrM chrY &
-
+```
 # Peak calling
 ## Using macs2
+```{r}
 macs2 callpeak --nomodel -t input.sorted.rmdup.100nt.bam -f BAMPE -n output_name --call-summits -g mm -B -q 0.05 --outdir outdir_name/ 
-
+```
 ## Removing peaks that map to blacklisted regions
-bedtools intersect -v -a my.bed -b mm10.blacklist.bed > my.filtered.bed
-
-## Removing peaks from chrY and chrM
-
-grep -v chrY my.filtered.bed | grep -v chrM > my.filtered.2.bed
+```{r}
+bedtools intersect -v -a my.bed -b mm10.blacklist.bed | grep -v chrY | grep -v chrM > my.filtered.bed
+```
 
 
 
