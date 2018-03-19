@@ -1,0 +1,50 @@
+---
+title: "ATAC_processing"
+author: "Elitsa Stoyanova"
+date: "3/19/2018"
+output: html_document
+---
+## QC and trimming of FastQ Files 
+# Using trim_galore, which is a wrapper for cutadapt and FastQC
+
+trim_galore --stringency 3 --fastqc --paired $R1.fastq $R2.fastq 
+
+## Alignment of raw reads
+# Using bowtie2 
+
+bowtie2 -p 64 -x Sequence/Bowtie2Index/genome -X 2000 --no-mixed --no-discordant -1 *.R1.fastq -2 *.R2.fastq -S output.sam > output.sam.out 2>&1&
+
+## Post-alignment processing
+# Sam to bam conversion with samtools 
+samtools view -Sb -@ 10 in.sam -o out.bam
+
+# Sorting
+samtools sort -@ 64 out.bam out.sorted 
+
+# Duplicate removal 
+samtools rmdup out.sorted.bam out.sorted.rmdup.bam
+
+# Selection of subnucleosomal reads 
+samtools view out.sorted.rmdup.bam | awk '(sqrt($9*$9)<100)' > out.sam
+samtools view -H *.sorted.rmdup.bam > header.txt
+cat header.txt out.sam | samtools view -Sb -o $100nt.bam
+
+
+
+
+```{r setup, include=FALSE}
+```
+
+
+
+```{r cars}
+summary(cars)
+```
+
+
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+
