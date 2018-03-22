@@ -14,11 +14,28 @@ trim_galore --stringency 3 --fastqc --paired --clip_R1 5 --clip_R2 $R1.fastq $R2
 # Alignment with Bismark
 ```
 bismark --bowtie2 -p 4 --multicore 4 bismark_genome_build/ -1 R1.fq -2 R2.fq 
+deduplicate_bismark -p --bam inputfile.bam
 ```
 
 # Sequencing quality control
 With dockerized custom post-processing script (bsExpress) from CEGX (kit manufacturer)
+`pwd` is R1 fastq's are in the folder you're have the script in
+or replace `pwd` with path to files. 
 ```
 docker	run	-v=`pwd`:/Data	-it	cegx_bsexpress_0.6	auto_bsExpress
 ```
+
+# Downstream processing with Methpipe from Smith lab
+Conversion to .mr format; methylation information extraction with methcounts; methylation and hydroxymethylation estimator using the mlml module. 
+```
+to-mr -o bismark.deduplicated.bam.mr -m bismark deduplicated.bam 
+LC_ALL=C sort -k 1,1 -k 3,3n -k 2,2n -k 6,6 -o out.mr.sorted  bismark.deduplicated.bam.mr
+methcounts -c genome.fa -o output.allC.meth *.sorted.mr &
+mlml -u *BS*.meth -m *OX*.meth -o *.mlml.txt
+```
+Workaround solution to select for a minimum coverage per base. In this example, minimum of 5.
+```
+awk '$6<5 {$6=0} 1' OFS='\t' input.meth | awk '$6 == 0 {$5=0} 1' OFS='\t' > output.cov5.meth
+```
+
 
