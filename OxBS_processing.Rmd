@@ -33,9 +33,17 @@ LC_ALL=C sort -k 1,1 -k 3,3n -k 2,2n -k 6,6 -o out.mr.sorted  bismark.deduplicat
 methcounts -c genome.fa -o output.allC.meth *.sorted.mr &
 mlml -u *BS*.meth -m *OX*.meth -o *.mlml.txt
 ```
+
 Workaround solution to select for a minimum coverage per base. In this example, minimum of 5.
 ```
 awk '$6<5 {$6=0} 1' OFS='\t' input.meth | awk '$6 == 0 {$5=0} 1' OFS='\t' > output.cov5.meth
 ```
 
+Merging symmetric CpGs, necessary for MethylSeekR
+```
+symmetric-cpgs -o symmetric*.meth -v -m input.meth &
+```
 
+# UMR analysis.
+
+# Metagenes?
