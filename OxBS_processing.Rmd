@@ -6,7 +6,7 @@ output: html_document
 ---
 
 # QC and trimming of FastQ Files 
-## Using trim_galore, which is a wrapper for cutadapt and FastQC
+Using trim_galore, which is a wrapper for cutadapt and FastQC
 ```
 trim_galore --stringency 3 --fastqc --paired --clip_R1 5 --clip_R2 $R1.fastq $R2.fastq 
 ```
@@ -16,7 +16,8 @@ trim_galore --stringency 3 --fastqc --paired --clip_R1 5 --clip_R2 $R1.fastq $R2
 bismark --bowtie2 -p 4 --multicore 4 bismark_genome_build/ -1 R1.fq -2 R2.fq 
 ```
 
-# Sequencing quality control with dockerized custom post-processing script (bsExpress) from CEGX (kit manufacturer)
+# Sequencing quality control
+With dockerized custom post-processing script (bsExpress) from CEGX (kit manufacturer)
 ```
 docker	run	-v=`pwd`:/Data	-it	cegx_bsexpress_0.6	auto_bsExpress
 ```
