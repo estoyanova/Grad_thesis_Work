@@ -43,7 +43,3 @@ Merging symmetric CpGs, necessary for MethylSeekR
 ```
 symmetric-cpgs -o symmetric*.meth -v -m input.meth &
 ```
-
-# UMR analysis.
-
-# Metagenes?
