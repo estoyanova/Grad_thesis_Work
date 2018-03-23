@@ -1,0 +1,18 @@
+---
+title: "RNA_processing"
+author: "Elitsa Stoyanova"
+date: "3/23/2018"
+output: html_document
+---
+
+# Alignment with STAR
+```
+STAR --genomeDir genom_sj --readFilesIn $fastq1 $fastq2 --runThreadN 32 --outFileNamePrefix PREFIX --outSAMtype BAM SortedByCoordinate --outFilterType BySJout --genomeLoad LoadAndKeep --limitBAMsortRAM 20000000000 --outBAMsortingThreadN 6 --readFilesCommand zcat --outFilterMismatchNmax 999 --alignMatesGapMax 1000000 --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0 --outFilterMatchNmin 60 --outFilterMismatchNoverLmax 0.05
+```
+
+# QC with Picard
+```
+java -jar CollectRnaSeqMetrics.jar I=input.bam O=output_metrics.txt REF_FLAT=Picard_mm10_refFlat.txt STRAND=SECOND_READ_TRANSCRIPTION_STRAND RIBOSOMAL_INTERVALS=Picard_mm10_rrna_intervalList.txt &
+```
+
+
