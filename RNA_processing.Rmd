@@ -78,8 +78,8 @@ dds$group = factor(paste0(dds$celltype, dds$condition))
 design(dds) = ~ group
 
 # This would say, e.g. filter out genes where there are less than or equal to 12 samples with normalized counts greater than or equal to 10.
-dds <- estimateSizeFactors(dds)
-idx <- rowSums( counts(dds, normalized=TRUE) >= 10 ) >= 12
-dds <- dds[idx,]
+dds = estimateSizeFactors(dds)
+idx = rowSums( counts(dds, normalized=TRUE) >= 10 ) >= 12
+dds = dds[idx,]
 dds = DESeq(dds, betaPrior=TRUE) # betaPrior refers to logfoldchange shrinkage.
 ```
