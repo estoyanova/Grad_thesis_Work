@@ -22,6 +22,7 @@ java -jar CollectRnaSeqMetrics.jar I=input.bam O=output_metrics.txt REF_FLAT=Pic
 library("BSgenome.Mmusculus.UCSC.mm10")
 library("TxDb.Mmusculus.UCSC.mm10.knownGene")
 library("org.Mm.eg.db")
+
 allT <- transcripts(TxDb.Mmusculus.UCSC.mm10.knownGene,columns=c("gene_id","tx_name"))
 myT <- getSeq(BSgenome.Mmusculus.UCSC.mm10, allT)
 names(myT) <-allT$tx_name
@@ -49,4 +50,14 @@ files = file.path(directory, list.files(directory), "quant.sf")
 names(files) = paste0(list.files(directory))
 ```
 
+#### Need to create a key between UCSC transcript ID and gene SYMBOL
+``` {r}
+k = keys(TxDb.Mmusculus.UCSC.mm10.knownGene, keytype = "TXNAME")
+tx2gene = biomaRt::select(TxDb.Mmusculus.UCSC.mm10.knownGene, k, "GENEID", "TXNAME")
+tx2gene = na.omit(tx2gene) # must remove NA otherwise gene level summarization fails
+```
 
+#### Use tximport to do transcript level summarization
+``` {r}
+txi = tximport(files, type = "salmon", tx2gene = tx2gene, countsFromAbundance = "no")
+```
