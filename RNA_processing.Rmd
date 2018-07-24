@@ -59,5 +59,7 @@ tx2gene = na.omit(tx2gene) # must remove NA otherwise gene level summarization f
 
 #### Use tximport to do transcript level summarization
 ``` {r}
+library("tximport")
+
 txi = tximport(files, type = "salmon", tx2gene = tx2gene, countsFromAbundance = "no")
 ```
