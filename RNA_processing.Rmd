@@ -15,9 +15,9 @@ STAR --genomeDir genom_sj --readFilesIn $fastq1 $fastq2 --runThreadN 32 --outFil
 java -jar CollectRnaSeqMetrics.jar I=input.bam O=output_metrics.txt REF_FLAT=Picard_mm10_refFlat.txt STRAND=SECOND_READ_TRANSCRIPTION_STRAND RIBOSOMAL_INTERVALS=Picard_mm10_rrna_intervalList.txt &
 ```
 
-# Transcript quantification with Salmon to run Salmon on all target fastq's (for paired end!)
+# Transcript quantification with Salmon 
 
-## Basic script (bash) 
+## Basic script (bash) to run Salmon on all target fastq's (for paired end!) 
 ```
 #!/bin/bash
 for fn in rnaseq_fastq/*;
