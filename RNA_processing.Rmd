@@ -17,7 +17,18 @@ java -jar CollectRnaSeqMetrics.jar I=input.bam O=output_metrics.txt REF_FLAT=Pic
 
 # Transcript quantification with Salmon 
 
-## Basic script (bash) to run Salmon on all target fastq's (for paired end!) 
+#### Generating a UCSC nascent RNA transcriptome for Salmon
+``` {r}
+library("BSgenome.Mmusculus.UCSC.mm10")
+library("TxDb.Mmusculus.UCSC.mm10.knownGene")
+library("org.Mm.eg.db")
+allT <- transcripts(TxDb.Mmusculus.UCSC.mm10.knownGene,columns=c("gene_id","tx_name"))
+myT <- getSeq(BSgenome.Mmusculus.UCSC.mm10, allT)
+names(myT) <-allT$tx_name
+writeXStringSet(myT, "R_ucsc_transcriptome.fa")
+```
+
+#### Basic script (bash) to run Salmon on all target fastq's (for paired end!) 
 ```
 #!/bin/bash
 for fn in rnaseq_fastq/*;
@@ -30,4 +41,12 @@ echo "Processing sample ${samp}"
          -p 32 -o quants_R_ucsc/${samp}_quant
 done 
 ```
+
+#### Reading in quant.sf files from Salmon output. 
+``` {r}
+directory = "~/quants_R_ucsc"
+files = file.path(directory, list.files(directory), "quant.sf")
+names(files) = paste0(list.files(directory))
+```
+
 
