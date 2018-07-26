@@ -13,10 +13,17 @@ Some parameters are missing, as the work is still unpublished.
     - Custom plotting with ggplot2
     - GO analysis with goseq
   + ATAC-Seq
-    - QC with FastQC
+    - QC and trimming with Trim Galore!
     - Alignment with Bowtie2
     - Wrangling with samtools
     - Track files generation with deepTools
-    - Filtering for blacklised regions
+    - Filtering for blacklisted regions
     - Peak calling
     - Peak Differential Accessibility with DiffBind
+    - Custom plotting with ggplot2
+  + OxBS-Seq
+    - QC and trimming with Trim Galore!
+    - Oxidation/converstion sequence control witt CEGX bsExpress
+    - Alignment with Bismark
+    - Processing with MethPipe
+    - 5C, 5mC and 5hmC calling with maximum likelihood estimator tool mlml from MethPipe
