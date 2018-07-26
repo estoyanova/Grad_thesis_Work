@@ -1,8 +1,0 @@
----
-title: "diffbind-differential-accessibility"
-author: "Elitsa Stoyanova"
-date: "3/29/2018"
-output: html_document
----
- 
-# Using diffbind to asess differentially accessible chromatin in development among different celltypes.
