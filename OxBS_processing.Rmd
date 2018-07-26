@@ -5,14 +5,22 @@ date: "3/22/2018"
 output: html_document
 ---
 
+Required software:
+* Trim Galore!
+* Bismark
+* Docker + CEGX bsExpress container
+* Methpipe
+
 # QC and trimming of FastQ Files 
 Using trim_galore, which is a wrapper for cutadapt and FastQC
 ```
+# bash
 trim_galore --stringency 3 --fastqc --paired --clip_R1 5 --clip_R2 $R1.fastq $R2.fastq 
 ```
 
 # Alignment with Bismark
 ```
+# bash
 bismark --bowtie2 -p 4 --multicore 4 bismark_genome_build/ -1 R1.fq -2 R2.fq 
 deduplicate_bismark -p --bam inputfile.bam
 ```
@@ -28,6 +36,7 @@ docker	run	-v=`pwd`:/Data	-it	cegx_bsexpress_0.6	auto_bsExpress
 # Downstream processing with Methpipe from Smith lab
 Conversion to .mr format; methylation information extraction with methcounts; methylation and hydroxymethylation estimator using the mlml module. 
 ```
+# bash
 to-mr -o bismark.deduplicated.bam.mr -m bismark deduplicated.bam 
 LC_ALL=C sort -k 1,1 -k 3,3n -k 2,2n -k 6,6 -o out.mr.sorted  bismark.deduplicated.bam.mr
 methcounts -c genome.fa -o output.allC.meth *.sorted.mr &
@@ -36,10 +45,12 @@ mlml -u *BS*.meth -m *OX*.meth -o *.mlml.txt
 
 Workaround solution to select for a minimum coverage per base. In this example, minimum of 5.
 ```
+# bash
 awk '$6<5 {$6=0} 1' OFS='\t' input.meth | awk '$6 == 0 {$5=0} 1' OFS='\t' > output.cov5.meth
 ```
 
 Merging symmetric CpGs, necessary for MethylSeekR
 ```
+# bash
 symmetric-cpgs -o symmetric*.meth -v -m input.meth &
 ```

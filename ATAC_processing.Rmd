@@ -4,26 +4,39 @@ author: "Elitsa Stoyanova"
 date: "3/19/2018"
 output: html_document
 ---
+
+Required software:
+* Trim Galore!
+* Bowtie2
+* Samtools
+* deepTools
+* Macs2
+* Bedtools
+
 # QC and trimming of FastQ Files 
 #### Using trim_galore, which is a wrapper for cutadapt and FastQC
 ```
+# bash
 trim_galore --stringency 3 --fastqc --paired $R1.fastq $R2.fastq 
 ```
 # Alignment of raw reads
 #### Using bowtie2 
 ```
+# bash
 bowtie2 -p 64 -x Sequence/Bowtie2Index/genome -X 2000 --no-mixed --no-discordant -1 *.R1.fastq -2 *.R2.fastq -S output.sam > output.sam.out 2>&1&
 ```
 # Post-alignment processing
 ####Sam to bam conversion with samtools, sorting, duplicate removal
 
 ``` 
+# bash
 samtools view -Sb -@ 10 in.sam -o out.bam
 samtools sort -@ 64 out.bam out.sorted 
 samtools rmdup out.sorted.bam out.sorted.rmdup.bam
 ```
 #### Selection of subnucleosomal reads 
 ```
+# bash
 samtools view out.sorted.rmdup.bam | awk '(sqrt($9*$9)<100)' > out.sam
 samtools view -H *.sorted.rmdup.bam > header.txt
 cat header.txt out.sam | samtools view -Sb -o $100nt.bam
@@ -33,15 +46,18 @@ cat header.txt out.sam | samtools view -Sb -o $100nt.bam
 #### Normalizing using RPKM with input
 
 ``` 
-bamCompare -b1 ATAC.sorted.dupsrem.bam -b2 input.out.bam -o log2.name.to.input.1x.merged.bw --normalizeUsingRPKM --minMappingQuality 30 --ignoreForNormalization chrX chrM chrY --blackListFileName ~/mm10.blacklist.bed -p 32 &
+# bash
+bamCompare -b1 ATAC.sorted.dupsrem.bam -b2 input.out.bam -o log2.name.to.input.RPKM.merged.bw --normalizeUsingRPKM --minMappingQuality 30 --ignoreForNormalization chrX chrM chrY --blackListFileName ~/mm10.blacklist.bed -p 32 &
 ```
 # Peak calling
 #### Using macs2
 ```
+# bash
 macs2 callpeak --nomodel -t input.sorted.rmdup.100nt.bam -f BAMPE -n output_name --call-summits -g mm -B -q 0.05 --outdir outdir_name/ 
 ```
 #### Removing peaks that map to blacklisted regions
 ```
+# bash
 bedtools intersect -v -a my.bed -b mm10.blacklist.bed | grep -v chrY | grep -v chrM > my.filtered.bed
 ```
 

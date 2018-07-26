@@ -5,6 +5,17 @@ date: "3/23/2018"
 output: html_document
 ---
 
+Required software:
+* FastQC
+* STAR
+* Picard
+* R + listed packages
+
+# QC with FastQC
+```
+fastqc R1.fastq R2.fastq
+```
+
 # Alignment with STAR
 ```
 # bash
@@ -85,7 +96,7 @@ dds = DESeqDataSetFromTximport(txi, sampleTable, design = ~condition + celltype 
 dds$group = factor(paste0(dds$celltype, dds$condition))
 design(dds) = ~ group
 
-# This would say, e.g. filter out genes where there are less than or equal to 12 samples with normalized counts greater than or equal to 10.
+# This would filter out genes where there are less than or equal to 12 samples with normalized counts greater than or equal to 10. You can do that to filter low expressed genes in order to speed up the process.
 dds = estimateSizeFactors(dds)
 idx = rowSums( counts(dds, normalized=TRUE) >= 10 ) >= 12
 dds = dds[idx,]
